@@ -39,4 +39,6 @@ public final class Constants {
 
 
     public static final String[] ITEMFRAME_ITEM_COMBOBOX = {DBType.GreenPlum.getName(), DBType.SqlServer.getName() };
+
+    public static final String ITEMFRAME_TITLE = "作业";
 }

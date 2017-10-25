@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import static com.mastercom.bigdata.UI.Constants.*;
+import static com.mastercom.bigdata.logic.Constants.*;
 
 /**
  * Created by Kwong on 2017/9/22.
@@ -173,7 +174,7 @@ public class NavigationPanel extends AbstractViewPanel<Job>{
                     JOptionPane.showMessageDialog(null, "请选择一条待删除记录！");
                 } else {
                     Job job = data.get(row);
-                    if (job.getStatus() == 1 && "运行态".equals(job.getStates())){
+                    if (job.getStatus() == JOB_STATUS_ENABLE && JOB_STATE_RUNNING.equals(job.getStates())){
                         JOptionPane.showMessageDialog(null, NavigationPanel.this.table.getValueAt(row, 0) + "正在运行态，请等job运行完成之后再进行删除");
                     } else {
                         NavigationPanel.this.controller.delete(job);
@@ -193,7 +194,7 @@ public class NavigationPanel extends AbstractViewPanel<Job>{
                     JOptionPane.showMessageDialog(null, "请选择一条记录！");
                 } else {
                     Job job = data.get(row);
-                    if (job.getStatus() == 1 && "运行态".equals(job.getStates())) {
+                    if (job.getStatus() == JOB_STATUS_ENABLE && JOB_STATE_RUNNING.equals(job.getStates())) {
                         JOptionPane.showMessageDialog(null, NavigationPanel.this.table.getValueAt(row, 0) + "正在运行态，请先等job运行结束再进行修改");
                     } else {
 
@@ -213,9 +214,9 @@ public class NavigationPanel extends AbstractViewPanel<Job>{
                 } else {
 
                     Job job = data.get(row);
-                    if (job.getStatus() == 1){
+                    if (job.getStatus() == JOB_STATUS_ENABLE){
                         Job request = new Job(job);
-                        request.setStatus(0);
+                        request.setStatus(JOB_STATUS_DISABLE);
                         ModelWrapper<Job> response = NavigationPanel.this.controller.put(request);
                         if (response.getReturnCode() == ModelWrapper.FAILED){
                             JOptionPane.showMessageDialog(null, response.getMsg());
@@ -234,9 +235,9 @@ public class NavigationPanel extends AbstractViewPanel<Job>{
                     JOptionPane.showMessageDialog(null, "请选择一条记录！");
                 } else {
                     Job job = data.get(row);
-                    if  (job.getStatus() == 0){
+                    if  (job.getStatus() == JOB_STATUS_DISABLE){
                         Job request = new Job(job);
-                        request.setStatus(1);
+                        request.setStatus(JOB_STATUS_ENABLE);
                         ModelWrapper<Job> response = NavigationPanel.this.controller.put(request);
                         if (response.getReturnCode() == ModelWrapper.FAILED){
                             JOptionPane.showMessageDialog(null, response.getMsg());
@@ -268,7 +269,7 @@ public class NavigationPanel extends AbstractViewPanel<Job>{
             Object[][] result = new Object[data.size()][3];
             for (int i = 0; i < data.size(); i++){
                 Job job = data.get(i);
-                result[i] = new Object[]{job.getJobName(), job.getStatus() > 0 ? "启用":"禁用", job.getStates()};
+                result[i] = new Object[]{job.getJobName(), job.getStatus() == JOB_STATUS_ENABLE ? "启用":"禁用", job.getStates()};
             }
             return result;
         }

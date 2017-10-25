@@ -14,7 +14,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.*;
-
+import static com.mastercom.bigdata.logic.Constants.*;
 
 /**
  * Created by Kwong on 2017/9/23.
@@ -34,18 +34,21 @@ class JobController extends AbstractController<Job> {
 
     @Override
     public ModelWrapper<Job> put(final Job model) {
-        Job tmp = null;
-        try {
-            tmp = service.findById(model.getId());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ModelWrapper<>(ModelWrapper.OPERA_UNDEFINED, ModelWrapper.FAILED, null, "Job 查询失败\n\t"+e.getMessage());
-        }
-        if (tmp != null && "运行态".equals(tmp.getStates())){
-            return new ModelWrapper<>(ModelWrapper.OPERA_MODIFY, ModelWrapper.FAILED, null, "Job--【" + tmp.getJobName() + "】正在运行态，请稍候再更新!");
-        }
-        if (tmp != null && !tmp.getJobName().equals(model.getJobName())){
-            return new ModelWrapper<>(ModelWrapper.OPERA_MODIFY, ModelWrapper.FAILED, null, "Job 修改失败，请勿修改jobname");
+        if (model.getId() != null){
+
+            Job tmp = null;
+            try {
+                tmp = service.findById(model.getId());
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new ModelWrapper<>(ModelWrapper.OPERA_UNDEFINED, ModelWrapper.FAILED, null, "Job 查询失败\n\t"+e.getMessage());
+            }
+            if (tmp != null && JOB_STATE_RUNNING.equals(tmp.getStates())){
+                return new ModelWrapper<>(ModelWrapper.OPERA_MODIFY, ModelWrapper.FAILED, null, "Job--【" + tmp.getJobName() + "】正在运行态，请稍候再更新!");
+            }
+            if (tmp != null && !tmp.getJobName().equals(model.getJobName())){
+                return new ModelWrapper<>(ModelWrapper.OPERA_MODIFY, ModelWrapper.FAILED, null, "Job 修改失败，请勿修改jobname");
+            }
         }
         ModelWrapper<Job> result = super.put(model);
         if (result.getReturnCode() == ModelWrapper.SUCCESS){
@@ -54,9 +57,15 @@ class JobController extends AbstractController<Job> {
             }else if (result.getOperation() == ModelWrapper.OPERA_MODIFY){
                 consolePrintln("Job 修改成功！");
             }
-            if (model.getStatus() == 1){
+            if (model.getStatus() == JOB_STATUS_ENABLE){
                 if (result.getOperation() == ModelWrapper.OPERA_MODIFY)
                     jobExecutor.removeFuture(model);
+                if (result.getOperation() == ModelWrapper.OPERA_NEW)
+                    try {
+                        model.setId(service.find(model).getId());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 jobExecutor.addFuture(model);
             }else{
                 jobExecutor.removeFuture(model);
@@ -80,7 +89,7 @@ class JobController extends AbstractController<Job> {
             e.printStackTrace();
             return new ModelWrapper<>(ModelWrapper.OPERA_UNDEFINED, ModelWrapper.FAILED, null, "Job 查询失败\n\t"+e.getMessage());
         }
-        if (tmp != null && "运行态".equals(tmp.getStates())){
+        if (tmp != null && JOB_STATE_RUNNING.equals(tmp.getStates())){
             return new ModelWrapper<>(ModelWrapper.OPERA_MODIFY, ModelWrapper.FAILED, null, "Job--【" + tmp.getJobName() + "】正在运行态，请稍候再删除!。");
         }
         ModelWrapper<Job> result = super.delete(model);
@@ -114,21 +123,21 @@ class JobController extends AbstractController<Job> {
 
         List<Job> jobs = null;
         try {
-            jobs = service.list(new Job.Builder().withStatus(1).build());
+            jobs = service.list(new Job.Builder().withStatus(JOB_STATUS_ENABLE).build());
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
         }
 
         for (Job job : jobs){
-//            jobExecutor.addFuture(job);
+            jobExecutor.addFuture(job);
 
-            job.setStates("空闲态");
+           /* job.setStates("空闲态");
             try {
                 service.update(job);
             } catch (Exception e) {
                 e.printStackTrace();
-            }
+            }*/
         }
     }
 
@@ -162,7 +171,7 @@ class JobController extends AbstractController<Job> {
                 }else{
                     return true;
                 }
-            } catch (ClassNotFoundException e) {
+            } catch (Exception e) {
                 consolePrintln(e.getMessage());
                 e.printStackTrace();
                 return false;
@@ -213,24 +222,24 @@ class JobController extends AbstractController<Job> {
                     public void run() {
 
                         String frequency = model.getPlanFrequency();
-                        if (frequency.equals("daily") || (frequency.equals("week") && TimeUtil.dayNoInOneWeek() == Integer.parseInt(model.getDay()))|| (frequency.equals("month") && TimeUtil.dayNoInOneMonth() == Integer.parseInt(model.getDay()))){
+                        if (frequency.equals(JOB_FREQUENCY_DAY) || (frequency.equals(JOB_FREQUENCY_WEEK) && TimeUtil.dayNoInOneWeek() == Integer.parseInt(model.getDay()))|| (frequency.equals(JOB_FREQUENCY_MONTH) && TimeUtil.dayNoInOneMonth() == Integer.parseInt(model.getDay()))){
 
                             //step1: 更新视图为 运行态
                             consolePrintln("\n 【当前时间" + df.format(new Date()) + "  job  --" + model.getJobName() + "--即将开始运行】");
                             String sql = model.getOrderContent().replace(";","");
                             consolePrintln(sql);
-                            model.setStates("运行态");
+                            model.setStates(JOB_STATE_RUNNING);
                             JobController.super.put(model);
 
                             //step2: 执行命令
                             boolean succeed = execute(model);
 
                             //step3: 更新视图为 空闲态
-                            model.setStates("空闲态");
+                            model.setStates(JOB_STATE_FREE);
                             //step4: 执行成功的话，刷新；失败的话将其暂停，并刷新。
                             if (!succeed){
                                 removeFuture(model);//测试证明，在线程中调用这个future.cancel()是可以停止调度这个任务的
-                                model.setStatus(0);
+                                model.setStatus(JOB_STATUS_DISABLE);
                                 consolePrintln("【" + model.getJobName() + "】运行失败,已禁用");
                             }else {
                                 consolePrintln("【" + model.getJobName() + "】一次运行完毕,等待下一个周期");
@@ -254,6 +263,7 @@ class JobController extends AbstractController<Job> {
             if (future != null){
                 futureMap.remove(model.getId());
                 future.cancel(true);
+                LOG.debug("删除【"+ model.getJobName() +"】任务计划成功");
             }else{
                 LOG.debug("没有包含这个任务，无法删除");
             }

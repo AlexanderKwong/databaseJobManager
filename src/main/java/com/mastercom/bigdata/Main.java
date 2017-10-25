@@ -40,16 +40,16 @@ public class Main {
             {
                 try
                 {
-//                    UIManager.setLookAndFeel(new SubstanceLookAndFeel());
-//                    JFrame.setDefaultLookAndFeelDecorated(true);
-//                    JDialog.setDefaultLookAndFeelDecorated(true);
-//                    SubstanceLookAndFeel.setCurrentTheme(new SubstanceTerracottaTheme());
-//
-//                    SubstanceLookAndFeel.setSkin(new BusinessBlackSteelSkin());
-//                    SubstanceLookAndFeel.setCurrentButtonShaper(new ClassicButtonShaper());
-//                    SubstanceLookAndFeel.setCurrentWatermark(new SubstanceBubblesWatermark());
-//                    SubstanceLookAndFeel.setCurrentBorderPainter(new StandardBorderPainter());
-//                    SubstanceLookAndFeel.setCurrentGradientPainter(new StandardGradientPainter());
+                    UIManager.setLookAndFeel(new SubstanceLookAndFeel());
+                    JFrame.setDefaultLookAndFeelDecorated(true);
+                    JDialog.setDefaultLookAndFeelDecorated(true);
+                    SubstanceLookAndFeel.setCurrentTheme(new SubstanceTerracottaTheme());
+
+                    SubstanceLookAndFeel.setSkin(new BusinessBlackSteelSkin());
+                    SubstanceLookAndFeel.setCurrentButtonShaper(new ClassicButtonShaper());
+                    SubstanceLookAndFeel.setCurrentWatermark(new SubstanceBubblesWatermark());
+                    SubstanceLookAndFeel.setCurrentBorderPainter(new StandardBorderPainter());
+                    SubstanceLookAndFeel.setCurrentGradientPainter(new StandardGradientPainter());
 //                    SubstanceLookAndFeel.setCurrentTitlePainter(new FlatTitlePainter());
 
                     MainFrame frame = MainFrame.getInstance();

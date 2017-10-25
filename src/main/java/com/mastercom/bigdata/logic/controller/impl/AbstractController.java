@@ -49,14 +49,12 @@ public abstract class AbstractController<T extends IModel> implements IControlle
     public ModelWrapper<T> put(T model) {
         int num = 0;
         int operation = ModelWrapper.OPERA_UNDEFINED;
+
         try{
-            T old = service.findById(model.getId());
-            if (old != null){
+            if(model.getId() != null && service.findById(model.getId()) != null){
                 operation = ModelWrapper.OPERA_MODIFY;
-           /*     if (model.getId() == 0){
-                    return new ModelWrapper<>(operation, ModelWrapper.FAILED, null, "操作失败，更新必须指定id");
-                }*/
                 num = service.update(model);
+
             }else{
                 operation = ModelWrapper.OPERA_NEW;
                 num = service.add(model);

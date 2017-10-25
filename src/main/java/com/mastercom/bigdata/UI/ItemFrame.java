@@ -6,6 +6,8 @@ import com.mastercom.bigdata.bean.impl.Job;
 import javax.swing.*;
 import java.util.Collections;
 
+import static com.mastercom.bigdata.UI.Constants.*;
+
 /**
  * Created by Kwong on 2017/9/23.
  */
@@ -16,7 +18,7 @@ public class ItemFrame extends JFrame {
     private ItemPanel itemPanel;
 
     private ItemFrame(){
-        super("作业");
+        super(ITEMFRAME_TITLE);
         if (instance != null)
             throw new IllegalAccessError();
 

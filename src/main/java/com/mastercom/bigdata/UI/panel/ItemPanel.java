@@ -17,6 +17,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import static com.mastercom.bigdata.logic.Constants.*;
+
 /**
  * Created by Kwong on 2017/9/22.
  */
@@ -102,27 +104,27 @@ public class ItemPanel extends AbstractViewPanel<Job>{
             }
             this.jta1.setText(job.getOrderContent());
 
-            if ("daily".equals(job.getPlanFrequency()))
+            if (JOB_FREQUENCY_DAY.equals(job.getPlanFrequency()))
             {
                 this.jrb1.setSelected(true);
                 this.jp6.removeAll();
                 addDailyPanel(this.jp6, job.getDailyTime());
                 this.jb2.updateUI();
-                this.frequencyType = "daily";
-            } else if ("week".equals(job.getPlanFrequency()))
+                this.frequencyType = JOB_FREQUENCY_DAY;
+            } else if (JOB_FREQUENCY_WEEK.equals(job.getPlanFrequency()))
             {
                 this.jrb2.setSelected(true);
                 this.jp6.removeAll();
                 addWeekPanel(this.jp6, job.getDailyTime(), job.getDay());
                 this.jp2.updateUI();
-                this.frequencyType = "week";
-            } else if ("month".equals(job.getPlanFrequency()))
+                this.frequencyType = JOB_FREQUENCY_WEEK;
+            } else if (JOB_FREQUENCY_MONTH.equals(job.getPlanFrequency()))
             {
                 this.jrb3.setSelected(true);
                 this.jp6.removeAll();
                 addMonthPanel(this.jp6, job.getDailyTime(), job.getDay());
                 this.jp2.updateUI();
-                this.frequencyType = "month";
+                this.frequencyType = JOB_FREQUENCY_MONTH;
             } else {
                 this.bg.clearSelection();
                 this.jp6.removeAll();
@@ -353,7 +355,7 @@ public class ItemPanel extends AbstractViewPanel<Job>{
                 ItemPanel.this.jp6.removeAll();
                 addDailyPanel(ItemPanel.this.jp6);
                 ItemPanel.this.jp2.updateUI();
-                ItemPanel.this.frequencyType = "daily";
+                ItemPanel.this.frequencyType = JOB_FREQUENCY_DAY;
             }
         });
         //每周单选框
@@ -363,7 +365,7 @@ public class ItemPanel extends AbstractViewPanel<Job>{
                 ItemPanel.this.jp6.removeAll();
                 addWeekPanel(ItemPanel.this.jp6);
                 ItemPanel.this.jp2.updateUI();
-                ItemPanel.this.frequencyType = "week";
+                ItemPanel.this.frequencyType = JOB_FREQUENCY_WEEK;
             }
         });
         //每月单选框
@@ -372,7 +374,7 @@ public class ItemPanel extends AbstractViewPanel<Job>{
                 ItemPanel.this.jp6.removeAll();
                 addMonthPanel(ItemPanel.this.jp6);
                 ItemPanel.this.jp2.updateUI();
-                ItemPanel.this.frequencyType = "month";
+                ItemPanel.this.frequencyType = JOB_FREQUENCY_MONTH;
             }
         });
         //启用
@@ -408,17 +410,17 @@ public class ItemPanel extends AbstractViewPanel<Job>{
                     message.append("【作业命令内容为必填项】");
                 }
                 String time = null;
-                String day = null;
-                if (ItemPanel.this.frequencyType.equals("daily"))
+                String day = "";
+                if (ItemPanel.this.frequencyType.equals(JOB_FREQUENCY_DAY))
                 {
                     Date date = (Date) ItemPanel.this.spinner.getValue();
                     time = ItemPanel.this.formatter.format(date);
-                } else if (ItemPanel.this.frequencyType.equals("week"))
+                } else if (ItemPanel.this.frequencyType.equals(JOB_FREQUENCY_WEEK))
                 {
                     day = ItemPanel.this.spinner_1.getValue().toString();
                     Date date = (Date) ItemPanel.this.spinner_2.getValue();
                     time = ItemPanel.this.formatter.format(date);
-                } else if (ItemPanel.this.frequencyType.equals("month"))
+                } else if (ItemPanel.this.frequencyType.equals(JOB_FREQUENCY_MONTH))
                 {
                     day = ItemPanel.this.spinner_3.getValue().toString();
                     Date date = (Date) ItemPanel.this.spinner_4.getValue();
@@ -442,8 +444,8 @@ public class ItemPanel extends AbstractViewPanel<Job>{
                             .withDailyTime(time)
                             .withDeclaration(discribe)
                             .withPlanFrequency(frequencyType)
-                            .withStates("空闲态")
-                            .withStatus(1)
+                            .withStates(JOB_STATE_FREE)
+                            .withStatus(JOB_STATUS_ENABLE)
                             .build();
                     ModelWrapper<Job> response = null;
                     if (data != null && !data.isEmpty()) {//modify

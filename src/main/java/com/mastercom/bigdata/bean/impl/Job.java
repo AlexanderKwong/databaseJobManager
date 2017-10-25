@@ -2,6 +2,7 @@ package com.mastercom.bigdata.bean.impl;
 
 import com.mastercom.bigdata.bean.IModel;
 import com.mastercom.bigdata.tools.TimeUtil;
+import static com.mastercom.bigdata.logic.Constants.*;
 
 /**
  * Created by Kwong on 2017/9/22.
@@ -236,11 +237,11 @@ public class Job implements IModel {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("\n 【Job信息如下】\n").append("Job名称：").append(getJobName()).append("\n");
-        if (this.getPlanFrequency().equals("daily")){
+        if (this.getPlanFrequency().equals(JOB_FREQUENCY_DAY)){
             sb.append("Job执行计划：每天").append(getDailyTime());
-        }else if (this.getPlanFrequency().equals("week")){
+        }else if (this.getPlanFrequency().equals(JOB_FREQUENCY_WEEK)){
             sb.append("Job执行计划：每周").append(TimeUtil.returnWeekWord(Integer.parseInt(getDay()))).append(getDailyTime());
-        }else if (this.getPlanFrequency().equals("month")){
+        }else if (this.getPlanFrequency().equals(JOB_FREQUENCY_MONTH)){
             sb.append("Job执行计划：每月").append(getDay()).append("号").append(getDailyTime());
         }else{
 
