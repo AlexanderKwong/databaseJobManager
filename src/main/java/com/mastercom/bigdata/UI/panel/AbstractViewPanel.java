@@ -1,7 +1,7 @@
 package com.mastercom.bigdata.UI.panel;
 
 import com.mastercom.bigdata.UI.IView;
-import com.mastercom.bigdata.bean.IModel;
+import com.mastercom.bigdata.model.IModel;
 import com.mastercom.bigdata.logic.controller.IController;
 import com.mastercom.bigdata.logic.controller.impl.ControllerFactory;
 import com.mastercom.bigdata.tools.ClassUtil;

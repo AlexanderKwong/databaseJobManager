@@ -1,7 +1,7 @@
 package com.mastercom.bigdata.logic.controller.impl;
 
 import com.mastercom.bigdata.UI.panel.LogPanel;
-import com.mastercom.bigdata.bean.impl.Job;
+import com.mastercom.bigdata.model.impl.Job;
 import com.mastercom.bigdata.logic.controller.ModelWrapper;
 import com.mastercom.bigdata.tools.TimeUtil;
 import com.mastercom.bigdata.tools.sql.DBType;

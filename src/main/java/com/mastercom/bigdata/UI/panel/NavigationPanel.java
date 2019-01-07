@@ -3,7 +3,7 @@ package com.mastercom.bigdata.UI.panel;
 import com.mastercom.bigdata.logic.controller.ModelWrapper;
 import com.mastercom.bigdata.UI.Constants;
 import com.mastercom.bigdata.UI.ItemFrame;
-import com.mastercom.bigdata.bean.impl.Job;
+import com.mastercom.bigdata.model.impl.Job;
 import com.mastercom.bigdata.logic.controller.impl.AbstractController;
 
 import javax.swing.*;

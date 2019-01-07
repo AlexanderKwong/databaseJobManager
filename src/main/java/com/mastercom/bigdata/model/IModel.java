@@ -1,4 +1,4 @@
-package com.mastercom.bigdata.bean;
+package com.mastercom.bigdata.model;
 
 /**
  * Created by Kwong on 2017/9/22.

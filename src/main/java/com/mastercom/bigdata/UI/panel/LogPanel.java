@@ -2,7 +2,7 @@ package com.mastercom.bigdata.UI.panel;
 
 import com.mastercom.bigdata.UI.Constants;
 import com.mastercom.bigdata.logic.controller.impl.AbstractController;
-import com.mastercom.bigdata.bean.impl.Job;
+import com.mastercom.bigdata.model.impl.Job;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

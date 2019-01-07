@@ -1,11 +1,11 @@
 package com.mastercom.bigdata.logic.controller.impl;
 
-import com.mastercom.bigdata.bean.IModel;
+import com.mastercom.bigdata.model.IModel;
 import com.mastercom.bigdata.logic.controller.IController;
 import com.mastercom.bigdata.logic.controller.ModelWrapper;
 import com.mastercom.bigdata.logic.service.impl.ServiceFactory;
 import com.mastercom.bigdata.UI.IView;
-import com.mastercom.bigdata.bean.impl.Job;
+import com.mastercom.bigdata.model.impl.Job;
 import com.mastercom.bigdata.logic.service.IService;
 import com.mastercom.bigdata.tools.ClassUtil;
 
