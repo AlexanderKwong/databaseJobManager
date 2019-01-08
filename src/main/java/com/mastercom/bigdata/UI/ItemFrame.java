@@ -1,7 +1,7 @@
 package com.mastercom.bigdata.UI;
 
 import com.mastercom.bigdata.UI.panel.ItemPanel;
-import com.mastercom.bigdata.bean.impl.Job;
+import com.mastercom.bigdata.model.impl.Job;
 
 import javax.swing.*;
 import java.util.Collections;

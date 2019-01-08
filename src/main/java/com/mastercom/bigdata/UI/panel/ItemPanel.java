@@ -3,7 +3,7 @@ import com.mastercom.bigdata.UI.Constants;
 import com.mastercom.bigdata.logic.controller.ModelWrapper;
 import com.mastercom.bigdata.tools.StringUtil;
 import com.mastercom.bigdata.tools.sql.DBType;
-import com.mastercom.bigdata.bean.impl.Job;
+import com.mastercom.bigdata.model.impl.Job;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,6 +1,6 @@
 package com.mastercom.bigdata.logic.service.impl;
 
-import com.mastercom.bigdata.bean.IModel;
+import com.mastercom.bigdata.model.IModel;
 import com.mastercom.bigdata.logic.Constants;
 import com.mastercom.bigdata.tools.ClassUtil;
 import com.mastercom.bigdata.tools.sql.DBUtil;

@@ -1,6 +1,6 @@
 package com.mastercom.bigdata.logic.service.impl;
 
-import com.mastercom.bigdata.bean.impl.Job;
+import com.mastercom.bigdata.model.impl.Job;
 import com.mastercom.bigdata.db.EmbeddDBTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,6 +1,6 @@
 package com.mastercom.bigdata.logic.controller;
 
-import com.mastercom.bigdata.bean.IModel;
+import com.mastercom.bigdata.model.IModel;
 
 import java.util.List;
 
