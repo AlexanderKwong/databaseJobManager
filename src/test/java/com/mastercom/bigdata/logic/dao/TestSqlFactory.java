@@ -37,17 +37,20 @@ public class TestSqlFactory {
     @Test
     public void testQuerySql(){
         Job job = new Job();
+        String querySql = SqlFactory.getQuerySql(job);
+        System.out.println(querySql);
+        Assert.assertFalse(querySql.contains("WHERE"));
+
         job.setCreateTime("20190108");
         job.setDay("2");
         job.setJobName("hello world");
-        String querySql = SqlFactory.getQuerySql(job);
+        querySql = SqlFactory.getQuerySql(job);
         System.out.println(querySql);
         String condition = querySql.split("WHERE")[1];
         Assert.assertTrue(condition.split("AND").length == 3);
         Assert.assertTrue(condition.contains("JOB_NAME like #{jobName}"));
         Assert.assertTrue(condition.contains("DAY like #{day}"));
         Assert.assertTrue(condition.contains("CREATE_TIME like #{createTime}"));
-
     }
 
     @Test

@@ -8,6 +8,29 @@ import java.util.regex.PatternSyntaxException;
  */
 public class StringUtil {
 
+    public static String parseCamelCase(String propertyName){
+        if(propertyName == null){
+            return null;
+        }
+        char[] f = propertyName.toCharArray();
+        char[] t = new char[f.length*2];
+        int i = 0;
+        for(char c : f){
+            if(c >= 65 && c<=90){
+                if (i != 0){
+                    t[i++] = '_';
+                }
+                t[i++] = c;
+            } else if(c >= 97 && c<=122){
+                t[i++] = (char) (c - 32);
+            }else{
+                t[i++] = c;
+            }
+        }
+        return String.valueOf(t, 0, i);
+
+    }
+
     public interface StrMatchCallBack{
 
         String handle(String oriStr, String matchWord);

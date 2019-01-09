@@ -9,6 +9,7 @@ import com.mastercom.bigdata.tools.adapter.ResultSetToModelAdapter;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -27,7 +28,7 @@ public class BaseDAO<M extends IModel> implements IDAO<M> {
 
     private final String UPDATE_SQL = SqlFactory.getInsertSql(clazz);
 
-    ResultSetToModelAdapter<M> resultSetToModelAdapter = new ResultSetToModelAdapter<>();
+    ResultSetToModelAdapter<M> resultSetToModelAdapter = new ResultSetToModelAdapter<>(clazz);
 
     /* 获取泛型指向的类 */
     private Class<M> getTypeClass(){
@@ -63,7 +64,9 @@ public class BaseDAO<M extends IModel> implements IDAO<M> {
         String formatedSql = SqlFactory.replaceSqlParamsWithQuestionMark(querySql);
         List<String> params = SqlFactory.getParameterValues(querySql, model);
         Iterable<M> result = EmbeddDBExecutor.query(formatedSql, params, resultSetToModelAdapter);
-        return CollectionUtil.toList(result);
+        List<M> modelList = new ArrayList<>();
+        CollectionUtil.collect(result, modelList);
+        return modelList;
     }
 
     @Override

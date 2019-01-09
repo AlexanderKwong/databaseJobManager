@@ -97,7 +97,7 @@ public class ItemPanel extends AbstractViewPanel<Job>{
             this.jtf2.setText(job.getUsername());
             this.jtf3.setText(job.getPassword());
             this.jtf4.setText(job.getJobName());
-            if (Objects.nonNull(job.getJobName())){
+            if (null != job.getJobName()){
                 this.jtf4.setEditable(false);
             }else {
                 this.jtf4.setEditable(true);
@@ -450,7 +450,7 @@ public class ItemPanel extends AbstractViewPanel<Job>{
                     ModelWrapper<Job> response = null;
                     if (data != null && !data.isEmpty()) {//modify
                         Job old = data.get(0);
-                        if (Objects.nonNull(old.getJobName()) && !old.getJobName().equals(jobname)) {
+                        if (null != old.getJobName() && !old.getJobName().equals(jobname)) {
                             JOptionPane.showMessageDialog(null, "JobName不能被修改");
                         }
                         job.setId(old.getId());

@@ -129,8 +129,6 @@ public final class DBUtil {
                 stat.close();
             }
             if (conn != null) {
-                //test
-                if (conn != connection)
                 conn.close();
             }
         } catch (SQLException e) {
@@ -287,21 +285,4 @@ public final class DBUtil {
         return result;
     }
 
-    private static Connection connection;
-    private static Connection getDerbySingleConn(String url, String user, String password){
-        if (connection == null){
-            synchronized (DBUtil.class){
-                if (connection == null){
-                    try {
-                        connection = getConnection(Constants.DB_DERBY_DRIVER, url, user, password);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-        return connection;
-    }
 }

@@ -1,6 +1,7 @@
 package com.mastercom.bigdata.tools;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -12,11 +13,9 @@ public final class CollectionUtil {
         return null;
     }
 
-    public static <M> List<? super M> toList(Iterable<? extends M> iterable){
-        List<? super M> result = new ArrayList<>();
+    public static <M> void collect(Iterable<? extends M> iterable, Collection<? super M> collecter){
         for (M m : iterable) {
-            result.add(m);
+            collecter.add(m);
         }
-        return result;
     }
 }

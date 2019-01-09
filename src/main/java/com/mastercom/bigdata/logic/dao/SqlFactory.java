@@ -18,41 +18,22 @@ import java.util.Objects;
 public class SqlFactory {
 
     private SqlFactory(){}
-
-    public static String parseCamelCase(String propertyName){
-        if(propertyName == null){
-            return null;
-        }
-        char[] f = propertyName.toCharArray();
-        char[] t = new char[f.length*2];
-        int i = 0;
-        for(char c : f){
-            if(c >= 65 && c<=90){
-                if (i != 0){
-                    t[i++] = '_';
-                }
-                t[i++] = c;
-            } else if(c >= 97 && c<=122){
-                t[i++] = (char) (c - 32);
-            }else{
-                t[i++] = c;
-            }
-        }
-        return String.valueOf(t, 0, i);
-
+    
+    private static String fieldNameToColumnName(String fieldName){
+        return StringUtil.parseCamelCase(fieldName);
     }
 
     private static String[] columnNames(Class<?> clazz){
         Field[] fields = clazz.getDeclaredFields();
         String[] fieldNames = new String[fields.length];
         for (int i = 0; i < fields.length; i++) {
-            fieldNames[i] = parseCamelCase(fields[i].getName());
+            fieldNames[i] = fieldNameToColumnName(fields[i].getName());
         }
         return fieldNames;
     }
 
     private static String tableName(Class<?> clazz){
-        return parseCamelCase(clazz.getSimpleName());
+        return fieldNameToColumnName(clazz.getSimpleName());
     }
 
     private static String[] fieldNames(final Class<?> clazz){
@@ -99,7 +80,7 @@ public class SqlFactory {
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             String fieldName = field.getName();
-            String columnName = parseCamelCase(fieldName);
+            String columnName = fieldNameToColumnName(fieldName);
             String columnType = columnType(field);
             if (!isFirst){
                 sb.append(",");
@@ -119,7 +100,7 @@ public class SqlFactory {
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             String fieldName = field.getName();
-            String columnName = parseCamelCase(fieldName);
+            String columnName = fieldNameToColumnName(fieldName);
             sql.VALUES(columnName, wrappedFieldName(fieldName));
         }
         return sql.toString();
@@ -130,7 +111,7 @@ public class SqlFactory {
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             String fieldName = field.getName();
-            String columnName = parseCamelCase(fieldName);
+            String columnName = fieldNameToColumnName(fieldName);
             sql.SET(columnName + "=" + wrappedFieldName(fieldName));
         }
         sql.WHERE("ID = #{id}");
@@ -157,7 +138,7 @@ public class SqlFactory {
             for (String fieldName : fieldNames(clazz)){
                 Method getter = getter(clazz, fieldName);
                 if (hasValue(getter, model)){
-                    WHERE(parseCamelCase(fieldName) + " like " + wrappedFieldName(fieldName));
+                    WHERE(fieldNameToColumnName(fieldName) + " like " + wrappedFieldName(fieldName));
                 }
             }
         }}.toString();
