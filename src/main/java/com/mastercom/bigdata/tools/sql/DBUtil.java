@@ -3,8 +3,6 @@ package com.mastercom.bigdata.tools.sql;
 import com.mastercom.bigdata.tools.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.lang.reflect.Proxy;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -121,7 +119,7 @@ public final class DBUtil {
      * @param stat
      * @param rs
      */
-    public static void close(Connection conn, Statement stat, ResultSet rs) throws SQLException {
+    public static void close(Connection conn, Statement stat, ResultSet rs) {
 
         try {
             if (rs != null) {
@@ -137,7 +135,6 @@ public final class DBUtil {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            throw e;
         }
 
     }
@@ -153,9 +150,7 @@ public final class DBUtil {
             throws SQLException {
 
         Objects.requireNonNull(conn);
-        PreparedStatement stat = null;
-        try {
-            stat = conn.prepareStatement(sql);
+        try (PreparedStatement stat = conn.prepareStatement(sql)){
             for (int i = 1; i <= values.size(); i++) {
                 stat.setString(i, values.get(i - 1));
             }
@@ -181,32 +176,31 @@ public final class DBUtil {
 
         Objects.requireNonNull(conn);
         List<String[]> result = new ArrayList<>();
-        PreparedStatement stat = null;
-        ResultSet rs = null;
         String[] o = null;
-        try {
-            stat = conn.prepareStatement(sql);
+        try (PreparedStatement stat = conn.prepareStatement(sql)){
             for (int i = 1; i <= values.size(); i++) {
                 stat.setString(i, values.get(i - 1));
             }
-            rs = stat.executeQuery();
-            ResultSetMetaData rm = rs.getMetaData();
-            while (rs.next())
-            {
-                o = new String[rm.getColumnCount()];
-                for (int i = 0; i < rm.getColumnCount(); i++)
+            try (ResultSet rs = stat.executeQuery()){
+                ResultSetMetaData rm = rs.getMetaData();
+                while (rs.next())
                 {
-                    if (rs.getString(i + 1) == null)
+                    o = new String[rm.getColumnCount()];
+                    for (int i = 0; i < rm.getColumnCount(); i++)
                     {
-                        o[i] = "null";
+                        if (rs.getString(i + 1) == null)
+                        {
+                            o[i] = "null";
+                        }
+                        else
+                        {
+                            o[i] = rs.getString(i + 1);
+                        }
                     }
-                    else
-                    {
-                        o[i] = rs.getString(i + 1);
-                    }
+                    result.add(o);
                 }
-                result.add(o);
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
             if (conn != null) {
@@ -228,10 +222,8 @@ public final class DBUtil {
             throws SQLException {
 
         Objects.requireNonNull(conn);
-        Statement stat = null;
-        try {
+        try (Statement stat = conn.createStatement()){
             LOG.debug(sql);
-            stat = conn.createStatement();
             return stat.executeUpdate(sql);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -254,13 +246,11 @@ public final class DBUtil {
 
         Objects.requireNonNull(conn);
         List<String[]> result = new ArrayList<>();
-        Statement stat = null;
-        ResultSet rs = null;
         String[] o = null;
-        try {
-            LOG.debug(sql);
-            stat = conn.createStatement();
-            rs = stat.executeQuery(sql);
+        LOG.debug(sql);
+        try (Statement stat = conn.createStatement();
+             ResultSet rs = stat.executeQuery(sql)){
+
             ResultSetMetaData rm = rs.getMetaData();
             while (rs.next())
             {

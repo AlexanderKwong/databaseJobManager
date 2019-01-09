@@ -176,12 +176,7 @@ class JobController extends AbstractController<Job> {
                 e.printStackTrace();
                 return false;
             }finally {
-                try {
-                    DBUtil.close(conn, null, null);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    consolePrintln(e.getMessage());;
-                }
+                DBUtil.close(conn, null, null);
             }
         }
 

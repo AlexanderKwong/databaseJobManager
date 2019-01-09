@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IDAO<M extends IModel> {
 
-    void createTable();
+    void create();
 
     int insert(M model);
 

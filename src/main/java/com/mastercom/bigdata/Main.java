@@ -101,11 +101,7 @@ public class Main {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }finally {
-            try {
-                DBUtil.close(conn, null, null);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            DBUtil.close(conn, null, null);
         }
         return results.size() == tables.size();
     }

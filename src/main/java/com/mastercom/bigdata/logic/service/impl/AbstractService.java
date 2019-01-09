@@ -53,7 +53,7 @@ public abstract class AbstractService<T extends IModel> implements IService<T> {
 
     @Override
     public T findById(Integer id) throws Exception {
-        Objects.requireNonNull(id);
+        if(id == null) return null;
         Class clazz = ClassUtil.getGeneralClass(this.getClass(), 0);
         Method setIdMethod = clazz.getMethod("setId", Integer.class);
         T model = (T)clazz.newInstance();
