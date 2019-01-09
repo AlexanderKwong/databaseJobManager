@@ -8,16 +8,28 @@ import java.util.regex.PatternSyntaxException;
  */
 public class StringUtil {
 
-    public   static   String stringFilter(String   str)   throws PatternSyntaxException {
-        // 只允许字母和数字
-         String   regEx  =  "[^a-zA-Z0-9]";
-        // 清除掉所有特殊字符
-//        String regEx="[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
-        Pattern   p   =   Pattern.compile(regEx);
-        Matcher m   =   p.matcher(str);
-        return   m.replaceAll("").trim();
+    public interface StrMatchCallBack{
+
+        String handle(String oriStr, String matchWord);
     }
 
+    /**
+     * 按指定的模式匹配，匹配上词回调处理
+     * @param str
+     * @param patternStr
+     * @param callBack
+     * @return
+     */
+    public static String match(String str, String patternStr, StrMatchCallBack callBack){
+
+        Pattern pattern = Pattern.compile(patternStr);
+        Matcher matcher = pattern.matcher(str);
+        while(matcher.find()){
+            String matchWord = matcher.group(0);
+            str = callBack.handle(str, matchWord);
+        }
+        return str;
+    }
 
     public static boolean isBlank(String str) {
         int strLen;
@@ -31,4 +43,5 @@ public class StringUtil {
         }
         return true;
     }
+
 }
