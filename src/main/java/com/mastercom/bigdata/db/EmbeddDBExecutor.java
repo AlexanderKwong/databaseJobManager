@@ -2,9 +2,10 @@ package com.mastercom.bigdata.db;
 
 import com.mastercom.bigdata.exception.SqlException;
 import com.mastercom.bigdata.logic.Constants;
-import com.mastercom.bigdata.model.IModel;
-import com.mastercom.bigdata.tools.adapter.ResultSetToModelAdapter;
+import com.mastercom.bigdata.tools.adapter.ResultSetAdapter;
 import com.mastercom.bigdata.tools.sql.DBUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.List;
@@ -13,6 +14,10 @@ import java.util.List;
  * Created by Kwong on 2019/1/8.
  */
 public class EmbeddDBExecutor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(EmbeddDBExecutor.class);
+
+    private EmbeddDBExecutor(){}
 
     static Connection connection;
 
@@ -27,6 +32,7 @@ public class EmbeddDBExecutor {
     }
 
     public static int execute(String formatedSql){
+        logSql(formatedSql, null);
         Connection conn = getConnection();
         try (Statement stat = conn.createStatement()){
             return stat.executeUpdate(formatedSql);
@@ -36,6 +42,7 @@ public class EmbeddDBExecutor {
     }
 
     public static int execute(String formatedSql, List<String> params){
+        logSql(formatedSql, params);
         Connection conn = getConnection();
         try (PreparedStatement stat = conn.prepareStatement(formatedSql)){
             for (int i = 0; i < params.size(); i++) {
@@ -47,24 +54,28 @@ public class EmbeddDBExecutor {
         }
     }
 
-    public static <M extends IModel> Iterable<M> query(String formatedSql, ResultSetToModelAdapter<M> resultSetToModelAdapter){
+    public static <M> Iterable<M> query(String formatedSql, ResultSetAdapter<M> resultSetAdapter){
+        logSql(formatedSql, null);
         Connection conn = getConnection();
-        try (Statement stat = conn.createStatement();
-             ResultSet rs = stat.executeQuery(formatedSql)){
-            return resultSetToModelAdapter.from(rs);
+        try {
+            Statement stat = conn.createStatement();
+            ResultSet rs = stat.executeQuery(formatedSql);
+            return resultSetAdapter.from(rs);
         } catch (SQLException e) {
             throw new SqlException(e);
         }
     }
 
-    public static <M extends IModel> Iterable<M> query(String formatedSql, List<String> params, ResultSetToModelAdapter<M> resultSetToModelAdapter){
+    public static <M> Iterable<M> query(String formatedSql, List<String> params, ResultSetAdapter<M> resultSetAdapter){
+        logSql(formatedSql, params);
         Connection conn = getConnection();
-        try (PreparedStatement stat = conn.prepareStatement(formatedSql)){
+        try {
+            PreparedStatement stat = conn.prepareStatement(formatedSql);
             for (int i = 0; i < params.size(); i++) {
                 stat.setString(i + 1, params.get(i));
             }
             ResultSet rs = stat.executeQuery();
-            return resultSetToModelAdapter.from(rs);
+            return resultSetAdapter.from(rs);
         } catch (SQLException e) {
             throw new SqlException(e);
         }
@@ -76,14 +87,21 @@ public class EmbeddDBExecutor {
                 if (connection == null){
                     try {
                         connection = DBUtil.getConnectionByType(Constants.DEFAULT_DATA_SOURCE, Constants.DEFAULT_DB_URL, Constants.DEFAULT_DB_USERBANE, Constants.DEFAULT_DB_PASSWORD);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
+                    } catch (Exception e) {
+                        throw new SqlException(e);
                     }
                 }
             }
         }
         return connection;
+    }
+
+    private static void logSql(String sql, List<String> params){
+        if (LOG.isDebugEnabled()){
+            LOG.debug("SQL:{}", sql);
+            if (params != null){
+                LOG.debug("PARAMETERS{}", params);
+            }
+        }
     }
 }

@@ -7,15 +7,15 @@ import java.util.List;
  */
 public interface IService<T> {
 
-    List<T> list(T model) throws Exception;
+    List<T> list(T model);
 
-    T find(T model) throws Exception;
+    T find(T model);
 
-    T findById(Integer id) throws Exception;
+    T findById(Integer id);
 
-    int add(T model) throws Exception;
+    int add(T model);
 
-    int update(T model) throws Exception;
+    int update(T model);
 
-    int remove(T model) throws Exception;
+    int remove(T model);
 }

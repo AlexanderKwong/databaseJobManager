@@ -15,7 +15,6 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import static com.mastercom.bigdata.logic.Constants.*;
 
@@ -86,10 +85,10 @@ public class ItemPanel extends AbstractViewPanel<Job>{
     public void fillData() {
         if (data != null && data.size()==1){
             Job job = data.get(0);
-            if (DBType.GreenPlum.getName().equals(job.getDatabaseType()))
+            if (DBType.GREENPLUM.getName().equals(job.getDatabaseType()))
             {
                 this.jcb1.setSelectedIndex(0);
-            } else if (DBType.GreenPlum.getName().equals(job.getDatabaseType()))
+            } else if (DBType.GREENPLUM.getName().equals(job.getDatabaseType()))
             {
                 this.jcb1.setSelectedIndex(1);
             }
@@ -341,9 +340,9 @@ public class ItemPanel extends AbstractViewPanel<Job>{
         // 下拉数据库类型选择框
         this.jcb1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (ItemPanel.this.jcb1.getSelectedItem().toString().equals(DBType.SqlServer.getName())) {
+                if (ItemPanel.this.jcb1.getSelectedItem().toString().equals(DBType.SQLSERVER.getName())) {
                     ItemPanel.this.jtf1.setText("jdbc:sqlserver://数据库IP:端口号;DatabaseName=数据库名称");
-                } else if (ItemPanel.this.jcb1.getSelectedItem().toString().equals(DBType.GreenPlum.getName())) {
+                } else if (ItemPanel.this.jcb1.getSelectedItem().toString().equals(DBType.GREENPLUM.getName())) {
                     ItemPanel.this.jtf1.setText("jdbc:postgresql://数据库IP:端口号/数据库名称");
                 }
             }

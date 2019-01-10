@@ -18,9 +18,6 @@ public class ConfigUtil {
 		if(in == null){
 			in = ConfigUtil.class.getResourceAsStream(configName);
 		}
-		/*if(in == null){
-			in = new PathMatchingResourcePatternResolver().getResource("classpath*:"+configName).getInputStream();
-		}*/
 		Properties properties = new Properties();
 		properties.load(in);
 		in.close();

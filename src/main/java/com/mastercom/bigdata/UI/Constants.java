@@ -38,7 +38,7 @@ public final class Constants {
     public static final String MAINFRAME_LOG_LABLE_TITLE = "运行日志";
 
 
-    public static final String[] ITEMFRAME_ITEM_COMBOBOX = {DBType.GreenPlum.getName(), DBType.SqlServer.getName() };
+    public static final String[] ITEMFRAME_ITEM_COMBOBOX = {DBType.GREENPLUM.getName(), DBType.SQLSERVER.getName() };
 
     public static final String ITEMFRAME_TITLE = "作业";
 }

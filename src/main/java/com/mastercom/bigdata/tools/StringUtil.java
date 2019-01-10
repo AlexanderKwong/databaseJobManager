@@ -2,11 +2,32 @@ package com.mastercom.bigdata.tools;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 /**
  * Created by Kwong on 2017/9/22.
  */
 public class StringUtil {
+
+    public static String parseUnderlineCase(String propertyName){
+        if(propertyName == null){
+            return null;
+        }
+        char[] f = propertyName.toCharArray();
+        char[] t = new char[f.length];
+        int i = 0;
+        int j = 0;
+        while(i < f.length){
+            char c = f[i++];
+            if(c == '_' && i != 1){
+                t[j++] = Character.toUpperCase(f[i++]);
+            }else if(c >= 65 && c<=90){
+               t[j++] = (char) (c + 32);
+            }else{
+                t[j++] = c;
+            }
+        }
+        return String.valueOf(t, 0, j);
+
+    }
 
     public static String parseCamelCase(String propertyName){
         if(propertyName == null){
@@ -60,7 +81,7 @@ public class StringUtil {
             return true;
         }
         for (int i = 0; i < strLen; i++) {
-            if ((Character.isWhitespace(str.charAt(i)) == false)) {
+            if ((Character.isWhitespace(str.charAt(i)))) {
                 return false;
             }
         }

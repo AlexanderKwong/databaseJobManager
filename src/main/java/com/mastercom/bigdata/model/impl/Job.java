@@ -243,8 +243,6 @@ public class Job implements IModel {
             sb.append("Job执行计划：每周").append(TimeUtil.returnWeekWord(Integer.parseInt(getDay()))).append(getDailyTime());
         }else if (this.getPlanFrequency().equals(JOB_FREQUENCY_MONTH)){
             sb.append("Job执行计划：每月").append(getDay()).append("号").append(getDailyTime());
-        }else{
-
         }
         return sb.toString();
     }

@@ -10,37 +10,16 @@ import java.util.Objects;
 
 /**
  * DBUtil
- * 获取 greenPlum/SQLServer/MySQL/Oracle/Hive的连接
+ * 获取 greenPlum/SQLServer/MYSQL/ORACLE/Hive的连接
  *
  * Created by Kwong on 2017/9/22.
  */
 
 public final class DBUtil {
 
-    private static Logger LOG = LoggerFactory.getLogger(DBUtil.class);
+    private DBUtil(){}
 
-    /**
-     * @param dbDriver     驱动类
-     * @param dbProperties 连接配置
-     * @return
-     *//*
-    public static Connection getConnection(String dbDriver, String dbProperties) throws SQLException {
-
-        Properties prop = getProp(dbProperties);
-
-        Connection conn = null;
-
-        try {
-            Class.forName(dbDriver);
-
-            conn = DriverManager.getConnection(prop.getProperty(Constants.DB_DEFAULT_URL), prop.getProperty(Constants.DB_DEFAULT_USERNAME),
-                    prop.getProperty(Constants.DB_DEFAULT_PASSWORD));
-
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return conn;
-    }*/
+    private static final Logger LOG = LoggerFactory.getLogger(DBUtil.class);
 
     /**
      * @param dbDriver 驱动类
@@ -50,23 +29,14 @@ public final class DBUtil {
      * @return
      */
     public static Connection getConnection(String dbDriver, String url, String user, String password) throws SQLException, ClassNotFoundException {
-
         Connection conn;
-
-        try {
-            Class.forName(dbDriver);
-
-            conn = DriverManager.getConnection(url, user, password);
-
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            throw e;
-        }
+        Class.forName(dbDriver);
+        conn = DriverManager.getConnection(url, user, password);
         return conn;
     }
 
     /**
-     * 获取 MySQL分库分表/Oracle/Hive/MySQL四种连接
+     * 获取 MySQL分库分表/ORACLE/Hive/MySQL四种连接
      *
      * @param dbType 类型
      * @return
@@ -76,31 +46,29 @@ public final class DBUtil {
         Connection conn = null;
 
         switch (dbType) {
-            case GreenPlum:
+            case GREENPLUM:
                 conn = DBUtil.getConnection(Constants.DB_GREENPLUM_DRIVER, url, user, password);
                 break;
-            case MySQL:
+            case MYSQL:
                 conn = DBUtil.getConnection(Constants.DB_MYSQL_DRIVER, url, user, password);
                 break;
-            case SqlServer:
+            case SQLSERVER:
                 conn = DBUtil.getConnection(Constants.DB_SQLSERVER_DRIVER, url, user, password);
                 break;
-            case Oracle:
+            case ORACLE:
                 conn = DBUtil.getConnection(Constants.DB_ORACLE_DRIVER, url, user, password);
                 break;
-            case HiveServer:
+            case HIVESERVER:
                 conn = DBUtil.getConnection(Constants.DB_HIVESERVER_DRIVER, url, user, password);
                 break;
-            case Spark:
+            case SPARK:
                 conn = DBUtil.getConnection(Constants.DB_SPARKSERVER_DRIVER, url, user, password);
                 break;
-            case Derby:
-//                conn = getDerbySingleConn(url, user, password);
+            case DERBY:
                 try{
                     conn = DBUtil.getConnection(Constants.DB_DERBY_DRIVER, url, user, password);
                 } catch (SQLException se) {
                     if ( se.getSQLState().equals("XJ015") ) {
-                        System.gc();
                         return getConnectionByType(dbType, url, user, password);
                     }
                 }
@@ -132,7 +100,7 @@ public final class DBUtil {
                 conn.close();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("", e);
         }
 
     }
@@ -154,19 +122,18 @@ public final class DBUtil {
             }
             return stat.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
-            if (conn != null) {
-                try {
-                    conn.rollback();
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
-                }
+            try {
+                conn.rollback();
+            } catch (SQLException e1) {
+                LOG.error("回滚失败", e1);
             }
-            LOG.error("执行操作：【" + sql + "】异常", e.fillInStackTrace());
+            logSqlException(sql, e);
             throw e;
-        } /*finally {
-            DBUtil.close(conn, stat, null);
-        }*/
+        }
+    }
+
+    private static void logSqlException(String sql, SQLException e) {
+        LOG.error("执行操作：【{}】异常", sql, e);
     }
 
     public static List<String[]> executeQuery(String sql, List<String> values,  Connection conn)
@@ -200,19 +167,14 @@ public final class DBUtil {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            if (conn != null) {
-                try {
-                    conn.rollback();
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
-                }
+            try {
+                conn.rollback();
+            } catch (SQLException e1) {
+                LOG.error("回滚失败", e1);
             }
-            LOG.error("执行操作：【" + sql + "】异常", e.fillInStackTrace());
+            logSqlException(sql, e);
             throw e;
-        }/* finally {
-            DBUtil.close(conn, stat, null);
-        }*/
+        }
         return result;
     }
 
@@ -224,19 +186,14 @@ public final class DBUtil {
             LOG.debug(sql);
             return stat.executeUpdate(sql);
         } catch (SQLException e) {
-            e.printStackTrace();
-            if (conn != null) {
-                try {
-                    conn.rollback();
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
-                }
+            try {
+                conn.rollback();
+            } catch (SQLException e1) {
+                LOG.error("回滚失败", e1);
             }
-            LOG.error("执行操作：【" + sql + "】异常", e.fillInStackTrace());
+            logSqlException(sql, e);
             throw e;
-        } /*finally {
-            DBUtil.close(conn, stat, null);
-        }*/
+        }
     }
 
     public static List<String[]> executeQuery(String sql, Connection conn)
@@ -263,25 +220,18 @@ public final class DBUtil {
                     {
                         o[i] = rs.getString(i + 1);
                     }
-                    System.out.print(o[i]+"\t");
                 }
-                System.out.println();
                 result.add(o);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            if (conn != null) {
-                try {
-                    conn.rollback();
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
-                }
+            try {
+                conn.rollback();
+            } catch (SQLException e1) {
+                LOG.error("回滚失败", e1);
             }
-            LOG.error("执行操作：【" + sql + "】异常", e.fillInStackTrace());
+            logSqlException(sql, e);
             throw e;
-        }/* finally {
-            DBUtil.close(conn, stat, null);
-        }*/
+        }
         return result;
     }
 

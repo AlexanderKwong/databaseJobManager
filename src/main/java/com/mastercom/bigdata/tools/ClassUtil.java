@@ -59,33 +59,30 @@ public final class ClassUtil {
      *            指定的文件目录
      */
     public static void getStream(String jarPaht, String filePaht) {
-        JarFile jarFile = null;
-        try {
-            jarFile = new JarFile(jarPaht);
+        try (JarFile jarFile = new JarFile(jarPaht)){
+            Enumeration<JarEntry> ee = jarFile.entries();
+
+            List<JarEntry> jarEntryList = new ArrayList<JarEntry>();
+            while (ee.hasMoreElements()) {
+                JarEntry entry = (JarEntry) ee.nextElement();
+                // 过滤我们出满足我们需求的东西，这里的fileName是指向一个具体的文件的对象的完整包路径，比如com/mypackage/test.txt
+                if (entry.getName().startsWith(filePaht)) {
+                    jarEntryList.add(entry);
+                }
+            }
+            try (InputStream in = jarFile.getInputStream(jarEntryList.get(0));
+                BufferedReader br = new BufferedReader(new InputStreamReader(in))){
+                String s = "";
+                while ((s = br.readLine()) != null) {
+                    System.out.println(s);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } catch (IOException e1) {
             e1.printStackTrace();
         }
-        Enumeration<JarEntry> ee = jarFile.entries();
 
-        List<JarEntry> jarEntryList = new ArrayList<JarEntry>();
-        while (ee.hasMoreElements()) {
-            JarEntry entry = (JarEntry) ee.nextElement();
-            // 过滤我们出满足我们需求的东西，这里的fileName是指向一个具体的文件的对象的完整包路径，比如com/mypackage/test.txt
-            if (entry.getName().startsWith(filePaht)) {
-                jarEntryList.add(entry);
-            }
-        }
-        try {
-            InputStream in = jarFile.getInputStream(jarEntryList.get(0));
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            String s = "";
-
-            while ((s = br.readLine()) != null) {
-                System.out.println(s);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     /**

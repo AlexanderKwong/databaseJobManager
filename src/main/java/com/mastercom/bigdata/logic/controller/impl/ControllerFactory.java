@@ -3,8 +3,9 @@ package com.mastercom.bigdata.logic.controller.impl;
 import com.mastercom.bigdata.model.IModel;
 import com.mastercom.bigdata.logic.controller.IController;
 import com.mastercom.bigdata.tools.ClassUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -15,10 +16,14 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class ControllerFactory {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ControllerFactory.class);
+
+    private ControllerFactory(){}
+
     private static Map<String, IController> cacheMap = new ConcurrentHashMap<>();
 
     public static <T extends IModel, C extends IController<T>> C getInstance(Class modelClass){
-        return (C)getInstance(modelClass.getName());
+        return getInstance(modelClass.getName());
     }
 
     public static <T extends IModel, C extends IController<T>> C getInstance(String modelClassName){
@@ -32,26 +37,28 @@ public final class ControllerFactory {
             List<Class> clazzList = ClassUtil.getChildrenClasses(AbstractController.class, ControllerFactory.class.getPackage().getName());
             Class c = null;
             for(Class clazz : clazzList){
-                try{
-                    c =  ClassUtil.getGeneralClass(clazz, 0);
-                }catch (ClassCastException e){
+                c = getGenericClass(clazz);
+                if (c == null){
                     continue;
                 }
+
                 if (modelClassName.equals(c.getName())){
-                    C INSTANCE = (C)clazz.newInstance();
-                    cacheMap.put(modelClassName, INSTANCE);
-                    return INSTANCE;
+                    C instance = (C)clazz.newInstance();
+                    cacheMap.put(modelClassName, instance);
+                    return instance;
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LOG.error("", e);
         }
         return null;
+    }
+
+    private static Class<?> getGenericClass(Class<?> clazz){
+        try{
+            return ClassUtil.getGeneralClass(clazz, 0);
+        }catch (ClassCastException e){
+            return null;
+        }
     }
 }

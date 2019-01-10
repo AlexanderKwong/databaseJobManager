@@ -8,6 +8,8 @@ import com.mastercom.bigdata.UI.IView;
 import com.mastercom.bigdata.model.impl.Job;
 import com.mastercom.bigdata.logic.service.IService;
 import com.mastercom.bigdata.tools.ClassUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -19,13 +21,15 @@ import java.util.Set;
  */
 public abstract class AbstractController<T extends IModel> implements IController<T> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractController.class);
+
     protected Set<ViewRef<T>> views;
 
     protected IService<T> service;
 
     protected AbstractController(){
         views = new HashSet<>();
-        service = (IService<T>) ServiceFactory.getInstance(ClassUtil.getGeneralClass(getClass(), 0));
+        service = ServiceFactory.getInstance(ClassUtil.getGeneralClass(getClass(), 0));
     }
 
     public void register(IView<T> view){
@@ -41,7 +45,7 @@ public abstract class AbstractController<T extends IModel> implements IControlle
            List<T> data = service.list(model);
            return new ModelWrapper<>(ModelWrapper.OPERA_QUERY, ModelWrapper.SUCCESS, data, "操作成功。");
        }catch(Exception e){
-            e.printStackTrace();
+           LOG.error("Fail to get model", e);
            return new ModelWrapper<>(ModelWrapper.OPERA_QUERY, ModelWrapper.FAILED, null, "操作失败。\n\t"+e.getMessage());
        }
     }
@@ -61,7 +65,7 @@ public abstract class AbstractController<T extends IModel> implements IControlle
             }
 
         }catch (Exception e){
-            e.printStackTrace();
+            LOG.error("Fail to put model", e);
             return new ModelWrapper<>(operation, ModelWrapper.FAILED, null, "操作失败。\n\t"+e.getMessage());
         }
         if (num > 0){
@@ -79,7 +83,7 @@ public abstract class AbstractController<T extends IModel> implements IControlle
             num = service.remove(model);
 
         }catch (Exception e){
-            e.printStackTrace();
+            LOG.error("Fail to delete model", e);
             return new ModelWrapper<>(ModelWrapper.OPERA_DELETE, ModelWrapper.FAILED, null, "操作失败。\n\t"+e.getMessage());
         }
         updateAllView();
@@ -104,11 +108,11 @@ public abstract class AbstractController<T extends IModel> implements IControlle
 
     protected class ViewRef<T>{
 
-        public IView<T> view;
+        public final IView<T> view;
 
-        public boolean callbackOnDataChanged;
+        public final boolean callbackOnDataChanged;
 
-        public Class viewClass;
+        public final Class viewClass;
 
         public ViewRef(IView<T> view, boolean callbackOnDataChanged){
             this.view = view;

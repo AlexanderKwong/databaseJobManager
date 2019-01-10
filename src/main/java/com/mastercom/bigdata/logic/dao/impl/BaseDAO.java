@@ -4,19 +4,16 @@ import com.mastercom.bigdata.db.EmbeddDBExecutor;
 import com.mastercom.bigdata.logic.dao.IDAO;
 import com.mastercom.bigdata.logic.dao.SqlFactory;
 import com.mastercom.bigdata.model.IModel;
+import com.mastercom.bigdata.tools.ClassUtil;
 import com.mastercom.bigdata.tools.CollectionUtil;
+import com.mastercom.bigdata.tools.adapter.ResultSetToIntegerAdapter;
 import com.mastercom.bigdata.tools.adapter.ResultSetToModelAdapter;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class BaseDAO<M extends IModel> implements IDAO<M> {
 
-    private final Class<M> clazz = getTypeClass();
+    private final Class<M> clazz = ClassUtil.getGeneralClass(getClass(), 0);
 
     private final String CREATE_SQL = SqlFactory.getCreateSql(clazz);
 
@@ -24,19 +21,16 @@ public class BaseDAO<M extends IModel> implements IDAO<M> {
 
     private final String QUERY_BY_ID_SQL = SqlFactory.getQueryByIdSql(clazz);
 
-    private final String DELETE_SQL = SqlFactory.getInsertSql(clazz);
+    private final String DELETE_SQL = SqlFactory.getDeleteSql(clazz);
 
-    private final String UPDATE_SQL = SqlFactory.getInsertSql(clazz);
+    private final String UPDATE_SQL = SqlFactory.getUpdateByIdSql(clazz);
 
     ResultSetToModelAdapter<M> resultSetToModelAdapter = new ResultSetToModelAdapter<>(clazz);
 
-    /* 获取泛型指向的类 */
-    private Class<M> getTypeClass(){
-        Type type = getClass().getGenericSuperclass();
-        Type[] types = ((ParameterizedType) type).getActualTypeArguments();
-        if (types[0] instanceof Class)
-            return ((Class<M>) types[0]);
-        else throw new IllegalArgumentException();
+    public BaseDAO(){
+        if (!tableExists()){
+            create();
+        }
     }
 
     @Override
@@ -72,7 +66,7 @@ public class BaseDAO<M extends IModel> implements IDAO<M> {
     @Override
     public M queryById(Integer id) {
         String formatedSql = SqlFactory.replaceSqlParamsWithQuestionMark(QUERY_BY_ID_SQL);
-        List<String> params = Arrays.asList(new String[]{String.valueOf(id)});
+        List<String> params = Collections.singletonList(String.valueOf(id));
         Iterable<M> result = EmbeddDBExecutor.query(formatedSql, params, resultSetToModelAdapter);
         Iterator<M> jobIterator = result.iterator();
         if (jobIterator.hasNext()){
@@ -87,4 +81,9 @@ public class BaseDAO<M extends IModel> implements IDAO<M> {
         return EmbeddDBExecutor.execute(formatedSql, params);
     }
 
+    private boolean tableExists(){
+        String sql = "SELECT 1 FROM SYS.SYSTABLES WHERE TABLENAME='" + SqlFactory.tableName(clazz)+"'";
+        Iterable<Integer> result = EmbeddDBExecutor.query(sql, new ResultSetToIntegerAdapter());
+        return result.iterator().hasNext();
+    }
 }

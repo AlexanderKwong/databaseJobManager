@@ -7,7 +7,7 @@ import com.mastercom.bigdata.tools.sql.DBType;
  */
 public final class Constants {
 
-    public static final DBType DEFAULT_DATA_SOURCE = DBType.Derby;
+    public static final DBType DEFAULT_DATA_SOURCE = DBType.DERBY;
 
     public static final String DEFAULT_DB_URL = "jdbc:derby:test;create=true";
 

@@ -8,12 +8,13 @@ import java.util.Date;
  */
 public final class TimeUtil {
 
+    private TimeUtil(){}
+
     public static int dayNoInOneWeek()
     {
         Calendar c = Calendar.getInstance();
         c.setTime(new Date(System.currentTimeMillis()));
-        int dayOfWeek = c.get(c.DAY_OF_WEEK);
-        return dayOfWeek;
+        return c.get(c.DAY_OF_WEEK);
     }
 
     public static int dayNoInOneMonth()
@@ -41,8 +42,8 @@ public final class TimeUtil {
                 return "星期五";
             case 7:
                 return "星期六";
-
+            default:
+                return "错误";
         }
-        return "错误";
     }
 }

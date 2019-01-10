@@ -4,18 +4,21 @@ import com.mastercom.bigdata.exception.SqlException;
 import com.mastercom.bigdata.model.IModel;
 import com.mastercom.bigdata.tools.StringUtil;
 import org.apache.ibatis.jdbc.SQL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Created by Kwong on 2019/1/8.
  */
 public class SqlFactory {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SqlFactory.class);
 
     private SqlFactory(){}
     
@@ -23,7 +26,7 @@ public class SqlFactory {
         return StringUtil.parseCamelCase(fieldName);
     }
 
-    private static String[] columnNames(Class<?> clazz){
+    public static String[] columnNames(Class<?> clazz){
         Field[] fields = clazz.getDeclaredFields();
         String[] fieldNames = new String[fields.length];
         for (int i = 0; i < fields.length; i++) {
@@ -32,7 +35,7 @@ public class SqlFactory {
         return fieldNames;
     }
 
-    private static String tableName(Class<?> clazz){
+    public static String tableName(Class<?> clazz){
         return fieldNameToColumnName(clazz.getSimpleName());
     }
 
@@ -55,7 +58,7 @@ public class SqlFactory {
         try {
             return clazz.getDeclaredMethod(getterMethodName);
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            LOG.error("找不到getter方法", e);
             return null;
         }
     }
@@ -65,9 +68,9 @@ public class SqlFactory {
         try {
             result = getter.invoke(object);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            LOG.error("getter没有访问权限", e);
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            LOG.error("getter调用失败", e);
         }
         return result != null;
     }
@@ -100,6 +103,9 @@ public class SqlFactory {
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             String fieldName = field.getName();
+            if ("id".equalsIgnoreCase(fieldName)){
+                continue;
+            }
             String columnName = fieldNameToColumnName(fieldName);
             sql.VALUES(columnName, wrappedFieldName(fieldName));
         }
@@ -111,6 +117,9 @@ public class SqlFactory {
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             String fieldName = field.getName();
+            if ("id".equalsIgnoreCase(fieldName)){
+                continue;
+            }
             String columnName = fieldNameToColumnName(fieldName);
             sql.SET(columnName + "=" + wrappedFieldName(fieldName));
         }
@@ -118,6 +127,7 @@ public class SqlFactory {
         return sql.toString();
     }
 
+    @SuppressWarnings("all")
     public static String getDeleteSql(final Class<? extends IModel> clazz){
         return new SQL() {{
             DELETE_FROM(tableName(clazz));
@@ -129,6 +139,7 @@ public class SqlFactory {
         return new SQL().SELECT(columnNames(clazz)).FROM(tableName(clazz)).WHERE("ID = #{id}").toString();
     }
 
+    @SuppressWarnings("all")
     public static <M extends IModel> String getQuerySql(final M model){
         final Class<?> clazz = model.getClass();
         return new SQL() {{
@@ -138,7 +149,7 @@ public class SqlFactory {
             for (String fieldName : fieldNames(clazz)){
                 Method getter = getter(clazz, fieldName);
                 if (hasValue(getter, model)){
-                    WHERE(fieldNameToColumnName(fieldName) + " like " + wrappedFieldName(fieldName));
+                    WHERE(fieldNameToColumnName(fieldName) + " = " + wrappedFieldName(fieldName));
                 }
             }
         }}.toString();
@@ -154,10 +165,13 @@ public class SqlFactory {
                 String fieldName = matchWord.substring(2, matchWord.length()-1);
                 Method getter = getter(clazz, fieldName);
                 try {
-                    Object value = getter.invoke(object);
-                    result.add(Objects.toString(value));
+                    if (getter != null){
+                        Object value = getter.invoke(object);
+                        if (value != null){
+                            result.add(value.toString());
+                        }else result.add(null);
+                    }
                 } catch (Exception e) {
-                    e.printStackTrace();
                     throw new SqlException(e);
                 }
                 return oriStr;

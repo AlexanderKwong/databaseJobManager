@@ -21,7 +21,7 @@ import static com.mastercom.bigdata.logic.Constants.*;
  */
 class JobController extends AbstractController<Job> {
 
-    private static Logger LOG = LoggerFactory.getLogger(JobController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JobController.class);
 
     private JobExecutor jobExecutor;
 
@@ -40,7 +40,7 @@ class JobController extends AbstractController<Job> {
             try {
                 tmp = service.findById(model.getId());
             } catch (Exception e) {
-                e.printStackTrace();
+                LOG.error("", e);
                 return new ModelWrapper<>(ModelWrapper.OPERA_UNDEFINED, ModelWrapper.FAILED, null, "Job 查询失败\n\t"+e.getMessage());
             }
             if (tmp != null && JOB_STATE_RUNNING.equals(tmp.getStates())){
@@ -64,7 +64,7 @@ class JobController extends AbstractController<Job> {
                     try {
                         model.setId(service.find(model).getId());
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        LOG.error("", e);
                     }
                 jobExecutor.addFuture(model);
             }else{
@@ -103,18 +103,14 @@ class JobController extends AbstractController<Job> {
     }
 
     private void consolePrintln(String msg){
-        boolean finish = false;
         for (ViewRef viewRef : views){
-//            LOG.debug("view class: " + viewRef.viewClass.getName());
             if (viewRef.viewClass == LogPanel.class){
                 ((LogPanel)viewRef.view).output(msg);
-                finish = true;
-                break;
+                return;
             }
         }
-        if (!finish){
-            LOG.debug("没有找到日志输出面板。\n\t待输出内容为：" + msg);
-        }
+        LOG.debug("没有找到日志输出面板。\n\t待输出内容为：" + msg);
+
     }
 
     @Override
@@ -125,19 +121,12 @@ class JobController extends AbstractController<Job> {
         try {
             jobs = service.list(new Job.Builder().withStatus(JOB_STATUS_ENABLE).build());
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("", e);
             System.exit(1);
         }
 
         for (Job job : jobs){
             jobExecutor.addFuture(job);
-
-           /* job.setStates("空闲态");
-            try {
-                service.update(job);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }*/
         }
     }
 
@@ -192,9 +181,6 @@ class JobController extends AbstractController<Job> {
         public void addFuture(final Job model){
             ScheduledFuture future = futureMap.get(model.getId());
             if (future == null){
-               /* String time = df.format(new Date());
-                System.out.println(time);
-                consolePrintln("当前时间" + time);*/
                 consolePrintln(model.toString());
 
                 //获取距离第一次的时间间隔
@@ -240,9 +226,9 @@ class JobController extends AbstractController<Job> {
                                 consolePrintln("【" + model.getJobName() + "】一次运行完毕,等待下一个周期");
                             }
                             JobController.super.put(model);
-                            LOG.debug("【"+ model.getJobName()+"】-----------finish------------");
+                            LOG.debug("【{}】-----------finish------------", model.getJobName());
                         }else {
-                            LOG.debug("【"+ model.getJobName()+"】不是正确的运行周期");
+                            LOG.debug("【{}】不是正确的运行周期", model.getJobName());
                         }
                     }
                 }, delay, 86400L, TimeUnit.SECONDS);

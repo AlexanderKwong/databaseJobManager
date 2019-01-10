@@ -10,7 +10,7 @@ public enum DBType {
 
 //    连接类型[0 MysqlBase库/1Mysql业务库/2Mysql图形报表库/3oracle库/4Hive库]
 
-    GreenPlum(0, "GreenPlum"), MySQL(1, "MySQL"), SqlServer(2,"SqlServer"), Oracle(3, "Oracle"), HiveServer(4, "Hive"), Spark(5, "Spark"), Derby(6, "Derby");
+    GREENPLUM(0, "GREENPLUM"), MYSQL(1, "MYSQL"), SQLSERVER(2,"SQLSERVER"), ORACLE(3, "ORACLE"), HIVESERVER(4, "Hive"), SPARK(5, "SPARK"), DERBY(6, "DERBY");
 
     private Integer value;
 
@@ -33,22 +33,22 @@ public enum DBType {
 
     public static DBType fromName(String name){
         switch (name){
-            case "GreenPlum":
-                return GreenPlum;
-            case "MySQL":
-                return MySQL;
-            case "SqlServer":
-                return SqlServer;
-            case "Oracle":
-                return Oracle;
+            case "GREENPLUM":
+                return GREENPLUM;
+            case "MYSQL":
+                return MYSQL;
+            case "SQLSERVER":
+                return SQLSERVER;
+            case "ORACLE":
+                return ORACLE;
             case "Hive":
-                return HiveServer;
-            case "Spark":
-                return Spark;
-            case "Derby":
-                return Derby;
+                return HIVESERVER;
+            case "SPARK":
+                return SPARK;
+            case "DERBY":
+                return DERBY;
             default:
-                return Derby;
+                return DERBY;
         }
     }
 }
