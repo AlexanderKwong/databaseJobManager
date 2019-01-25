@@ -2,7 +2,7 @@ package com.mastercom.bigdata.logic.controller.impl;
 
 import com.mastercom.bigdata.model.IModel;
 import com.mastercom.bigdata.logic.controller.IController;
-import com.mastercom.bigdata.tools.ClassUtil;
+import com.mastercom.bigdata.common.util.ClassUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +23,7 @@ public final class ControllerFactory {
     private static Map<String, IController> cacheMap = new ConcurrentHashMap<>();
 
     public static <T extends IModel, C extends IController<T>> C getInstance(Class modelClass){
-        return getInstance(modelClass.getName());
+        return (C)getInstance(modelClass.getName());
     }
 
     public static <T extends IModel, C extends IController<T>> C getInstance(String modelClassName){

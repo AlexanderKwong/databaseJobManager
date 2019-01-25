@@ -2,7 +2,7 @@ package com.mastercom.bigdata.logic.dao;
 
 import com.mastercom.bigdata.exception.SqlException;
 import com.mastercom.bigdata.model.IModel;
-import com.mastercom.bigdata.tools.StringUtil;
+import com.mastercom.bigdata.common.util.StringUtil;
 import org.apache.ibatis.jdbc.SQL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Kwong on 2019/1/8.
+ * Created by Kwong on 2018/1/8.
  */
 public class SqlFactory {
 

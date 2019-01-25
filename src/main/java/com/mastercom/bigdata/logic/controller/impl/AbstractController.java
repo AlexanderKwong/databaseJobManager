@@ -4,10 +4,10 @@ import com.mastercom.bigdata.model.IModel;
 import com.mastercom.bigdata.logic.controller.IController;
 import com.mastercom.bigdata.logic.controller.ModelWrapper;
 import com.mastercom.bigdata.logic.service.impl.ServiceFactory;
-import com.mastercom.bigdata.UI.IView;
+import com.mastercom.bigdata.view.IView;
 import com.mastercom.bigdata.model.impl.Job;
 import com.mastercom.bigdata.logic.service.IService;
-import com.mastercom.bigdata.tools.ClassUtil;
+import com.mastercom.bigdata.common.util.ClassUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +55,7 @@ public abstract class AbstractController<T extends IModel> implements IControlle
         int operation = ModelWrapper.OPERA_UNDEFINED;
 
         try{
-            if(model.getId() != null && service.findById(model.getId()) != null){
+            if(model.getId() != null /*&& service.findById(model.getId()) != null*/){
                 operation = ModelWrapper.OPERA_MODIFY;
                 num = service.update(model);
 

@@ -1,7 +1,7 @@
 package com.mastercom.bigdata.model.impl;
 
 import com.mastercom.bigdata.model.IModel;
-import com.mastercom.bigdata.tools.TimeUtil;
+import com.mastercom.bigdata.common.util.TimeUtil;
 import static com.mastercom.bigdata.logic.Constants.*;
 
 /**

@@ -1,6 +1,6 @@
 package com.mastercom.bigdata;
 
-import com.mastercom.bigdata.UI.MainFrame;
+import com.mastercom.bigdata.view.MainFrame;
 import org.jvnet.substance.SubstanceLookAndFeel;
 import org.jvnet.substance.border.StandardBorderPainter;
 import org.jvnet.substance.button.ClassicButtonShaper;

@@ -1,6 +1,6 @@
 package com.mastercom.bigdata.logic;
 
-import com.mastercom.bigdata.tools.sql.DBType;
+import com.mastercom.bigdata.common.sql.DBType;
 
 /**
  * Created by Kwong on 2017/9/25.

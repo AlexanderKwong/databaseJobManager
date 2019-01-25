@@ -10,16 +10,16 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
- * Created by Kwong on 2019/1/8.
+ * Created by Kwong on 2018/1/8.
  */
 public class TestJobDAO {
 
     private static final Logger LOG = LoggerFactory.getLogger(TestJobDAO.class);
 
-    JobDAO dao;
+    JobDao dao;
     @Before
     public void before(){
-        dao = new JobDAO();
+        dao = new JobDao();
     }
 
     @Test
@@ -33,7 +33,7 @@ public class TestJobDAO {
     public void testInsert(){
         Job job = new Job();
         job.setJobName("测试01");
-        job.setCreateTime("20190108");
+        job.setCreateTime("20180108");
         job.setDatabaseType("DERBY");
         job.setStates("hello");
         List<Job> result = dao.query(job);
@@ -48,7 +48,7 @@ public class TestJobDAO {
         LOG.info("=======================================");
         Job job = new Job();
         job.setJobName("测试01");
-        job.setCreateTime("20190108");
+        job.setCreateTime("20180108");
         job.setDatabaseType("DERBY");
         job.setStates("hello");
         List<Job> result = dao.query(job);
@@ -74,7 +74,7 @@ public class TestJobDAO {
         LOG.info("=======================================");
         Job job = new Job();
         job.setJobName("测试01");
-        job.setCreateTime("20190108");
+        job.setCreateTime("20180108");
         job.setDatabaseType("DERBY");
         job.setStates("hello");
         List<Job> result = dao.query(job);

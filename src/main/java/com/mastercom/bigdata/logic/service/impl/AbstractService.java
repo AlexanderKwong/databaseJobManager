@@ -1,6 +1,6 @@
 package com.mastercom.bigdata.logic.service.impl;
 
-import com.mastercom.bigdata.logic.dao.IDAO;
+import com.mastercom.bigdata.logic.dao.IDao;
 import com.mastercom.bigdata.model.IModel;
 import com.mastercom.bigdata.logic.service.IService;
 
@@ -12,7 +12,7 @@ import java.util.Objects;
  */
 public abstract class AbstractService<T extends IModel> implements IService<T> {
 
-    protected IDAO<T> dao;
+    protected IDao<T> dao;
 
     @Override
     public List<T> list(T model) {

@@ -2,7 +2,7 @@ package com.mastercom.bigdata.logic.service.impl;
 
 import com.mastercom.bigdata.model.IModel;
 import com.mastercom.bigdata.logic.service.IService;
-import com.mastercom.bigdata.tools.ClassUtil;
+import com.mastercom.bigdata.common.util.ClassUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,8 +22,8 @@ public final class ServiceFactory {
 
     private static Map<String, IService> cacheMap = new ConcurrentHashMap<>();
 
-    public static <T extends IModel, C extends IService<T>> C getInstance(Class modelClass){
-        return getInstance(modelClass.getName());
+    public static <T extends IModel, C extends IService<T>> C getInstance(Class<T> modelClass){
+        return (C)getInstance(modelClass.getName());
     }
 
     public static <T extends IModel, C extends IService<T>> C getInstance(String modelClassName){

@@ -10,9 +10,9 @@ import java.util.List;
  */
 public class ModelWrapper<T extends IModel> {
 
-    public static final int SUCCESS = 0;
+    public static final int SUCCESS = 200;
 
-    public static final int FAILED = 1;
+    public static final int FAILED = 400;
 
     public static final int OPERA_NEW = 0;
 
@@ -53,5 +53,21 @@ public class ModelWrapper<T extends IModel> {
 
     public String getMsg(){
         return msg;
+    }
+
+    public String resultMsg(){
+        int resultCode = operation + returnCode;
+        switch (resultCode){
+            case 200: return "新增成功";
+            case 201: return "修改成功";
+            case 202: return "删除成功";
+            case 203: return "查询成功";
+            case 400: return "新增失败";
+            case 401: return "修改失败";
+            case 402: return "删除失败";
+            case 403: return "查询失败";
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 }

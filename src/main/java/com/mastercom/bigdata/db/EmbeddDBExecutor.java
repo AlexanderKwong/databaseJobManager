@@ -2,8 +2,8 @@ package com.mastercom.bigdata.db;
 
 import com.mastercom.bigdata.exception.SqlException;
 import com.mastercom.bigdata.logic.Constants;
-import com.mastercom.bigdata.tools.adapter.ResultSetAdapter;
-import com.mastercom.bigdata.tools.sql.DBUtil;
+import com.mastercom.bigdata.common.adapter.ResultSetAdapter;
+import com.mastercom.bigdata.common.sql.DBUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +11,7 @@ import java.sql.*;
 import java.util.List;
 
 /**
- * Created by Kwong on 2019/1/8.
+ * Created by Kwong on 2018/1/8.
  */
 public class EmbeddDBExecutor {
 
